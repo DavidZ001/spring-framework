@@ -316,6 +316,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
 		Set<ConfigurationClass> alreadyParsed = new HashSet<>(configCandidates.size());
 		do {
+			// 此处 仅仅注册包扫描的 类
 			parser.parse(candidates);
 			parser.validate();
 
@@ -328,12 +329,16 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						registry, this.sourceExtractor, this.resourceLoader, this.environment,
 						this.importBeanNameGenerator, parser.getImportRegistry());
 			}
+			// 注册 @Bean 和 @Import 或者 @ImportResource
 			this.reader.loadBeanDefinitions(configClasses);
 			alreadyParsed.addAll(configClasses);
 
 			candidates.clear();
-			if (registry.getBeanDefinitionCount() > candidateNames.length) {
+			// 判定 是否解析完整
+			if (registry.getBeanDefinitionCount() > candidateNames.length) { // 判定是否发生过解析
+				// 新解析和注册的Bean
 				String[] newCandidateNames = registry.getBeanDefinitionNames();
+				// 老的注册的Bean
 				Set<String> oldCandidateNames = new HashSet<>(Arrays.asList(candidateNames));
 				Set<String> alreadyParsedClasses = new HashSet<>();
 				for (ConfigurationClass configurationClass : alreadyParsed) {
@@ -351,6 +356,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 				candidateNames = newCandidateNames;
 			}
 		}
+		// 当candidates 为空是表示已经解析完整
 		while (!candidates.isEmpty());
 
 		// Register the ImportRegistry as a bean in order to support ImportAware @Configuration classes

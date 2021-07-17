@@ -197,6 +197,7 @@ class ConfigurationClassBeanDefinitionReader {
 		String beanName = (!names.isEmpty() ? names.remove(0) : methodName);
 
 		// Register aliases even when overridden
+		// 对象别名
 		for (String alias : names) {
 			this.registry.registerAlias(beanName, alias);
 		}
