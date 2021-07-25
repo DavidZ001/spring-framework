@@ -21,6 +21,10 @@ ext {
 	}
 }
 
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8"
+}
+
 configure(allprojects) { project ->
 	apply plugin: "io.spring.dependency-management"
 
